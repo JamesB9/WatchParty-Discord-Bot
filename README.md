@@ -1,0 +1,2 @@
+# WatchParty Discord Bot
+ 
