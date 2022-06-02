@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const {db} = require('../models/database')
+const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,9 +22,22 @@ module.exports = {
     async execute(interaction) {
         const type = interaction.options.getString('type');
         const name = interaction.options.getString('name');
+        const uuid = uuidv4();
+        const userID = interaction.user.id;
 
-        const insert = db.prepare('INSERT INTO Requests VALUES (?, ?, ?)');
-        insert.run(type, name, new Date().toISOString())
+        /*const transaction = db.transaction(() => {
+            const insert = db.prepare('INSERT INTO Requests VALUES (?, ?, ?, ?, ?)');
+            insert.run(uuid, type, name, new Date().toISOString(), 0)
+
+            const insert2 = db.prepare('INSERT INTO UserVotes VALUES (?, ?)');
+            insert2.run(uuid, userID)
+        })
+        transaction()*/
+        const insert = db.prepare('INSERT INTO Requests VALUES (?, ?, ?, ?, ?)');
+        insert.run(uuid, type, name, new Date().toISOString(), 1)
+
+        const insert2 = db.prepare('INSERT INTO UserVotes VALUES (?, ?)');
+        insert2.run(uuid, userID)
 
         await interaction.reply({ content: `Request received for the ${type}: ${name}`, ephemeral: true });
     },

@@ -1,10 +1,21 @@
-/* Posts TABLE */
+
 CREATE TABLE IF NOT EXISTS Requests
 (
+    Uuid VARCHAR(128) NOT NULL,
     Type VARCHAR(128) NOT NULL,
     Name VARCHAR(12) NOT NULL,
     Date DATE NOT NULL,
+    Votes INTEGER DEFAULT 0 NOT NULL,
 
-	PRIMARY KEY (Type, Name)
+	PRIMARY KEY (Uuid)
+);
+
+
+CREATE TABLE IF NOT EXISTS UserVotes
+(
+    RequestId VARCHAR(128) NOT NULL,
+    UserId VARCHAR(128) NOT NULL,
+	PRIMARY KEY (RequestId, UserId)
+    FOREIGN KEY (RequestId) REFERENCES Requests(Uuid) ON DELETE CASCADE
 );
 
